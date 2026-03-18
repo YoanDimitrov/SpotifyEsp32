@@ -126,6 +126,11 @@ class Spotify {
     /// @param filter JsonDocument containing the fields to filter(Optional, returns all fields if not provided)
     /// @return response object containing http status code and reply
     response currently_playing(JsonDocument filter = JsonDocument());
+
+    ///Jonkata production
+    response get_track_info(JsonDocument filter, char* trackID);
+
+
     /// @brief Start or resume playback. If no device_id is provided, the user's currently active device is the target. 
     /// @param context_uri Spotify URI of the context to play (Required)
     /// @param offset Indicates from where in the context playback should start, Only works with albums or Playlists. NEEDS TO BE SET (0) IF ONLY URI IS PROVIDED
@@ -646,6 +651,12 @@ class Spotify {
     /// @brief Get if device is playing
     /// @return true if device is playing
     bool is_playing();
+
+    ///Jonkata productions
+    int progress_ms();
+    unsigned long long timestamp();
+    int duration_ms();
+
     /// @brief Get if it is possible to modify volume on current device
     /// @return true if it is possible to modify volume on current device
     bool volume_modifyable();
