@@ -252,6 +252,7 @@ response Spotify::RestApi(const char* rest_url, const char* type, int payload_si
 
   String str_response;
   JsonDocument response;
+  
   if (!valid_http_code(header_data.http_code)){
     response = process_response(header_data);
   }else{
@@ -558,6 +559,18 @@ response Spotify::currently_playing(JsonDocument filter){
   snprintf(url, sizeof(url),"%sme/player/currently-playing", _base_url);
   return RestApiGet(url, filter);
 }
+//Jonkata production
+response Spotify::get_track_info(JsonDocument filter, char* trackID) {
+  char url[128];
+  //const char* temp = trackID.c_str();
+  //Serial.print("Received trackID: ");
+  //Serial.println(trackID);
+  snprintf(url, sizeof(url), "%stracks/%s", _base_url, trackID);
+  //Serial.print("Quering: ");
+  //Serial.println(url);
+  return RestApiGet(url, filter);
+}
+
 response Spotify::current_playback_state(JsonDocument filter){
   char url[60];
   snprintf(url, sizeof(url),"%sme/player", _base_url);
@@ -1461,6 +1474,52 @@ bool Spotify::is_playing(){
   }
   return is_playing;
 }
+
+///Jonkata productions
+int Spotify::progress_ms(){
+  int progress_ms=NULL;
+  JsonDocument filter;
+  filter["progress_ms"] = true;
+  response data = currently_playing(filter);
+
+  if(valid_http_code(data.status_code)){
+    progress_ms = data.reply["progress_ms"].as<int>();
+  }
+  return progress_ms;
+}
+unsigned long long Spotify::timestamp(){
+  unsigned long long timestamp=0;
+  JsonDocument filter;
+  filter["timestamp"] = true;
+  response data = currently_playing(filter);
+  //print_response(data);
+
+  if(valid_http_code(data.status_code)){
+    timestamp = data.reply["timestamp"].as<unsigned long long>();
+  }
+  return timestamp;
+}
+
+int Spotify::duration_ms(){
+  int duration_ms=-1;
+  JsonDocument filter;
+  filter["duration_ms"] = true;
+  char trackID[32];
+  current_track_id(trackID);
+  //Serial.print("TrackID: ");
+  //Serial.println(trackID);
+  response data = get_track_info(filter, trackID);
+  //Serial.println(data.status_code);
+  //Serial.println(data.reply.as<String>());
+  //print_response(data);
+  if(valid_http_code(data.status_code)){
+    duration_ms = data.reply["duration_ms"].as<int>();
+  }
+
+  return duration_ms;
+}
+
+
 bool Spotify::volume_modifyable(){
   bool volume_modifyable = false;
   JsonDocument filter;
