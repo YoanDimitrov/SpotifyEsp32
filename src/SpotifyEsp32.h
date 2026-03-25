@@ -96,6 +96,14 @@ typedef struct{
   String error;
 } header_resp;
 
+/// Jonkata production
+typedef struct {
+  int progress, duration;
+  String trackName, artistName; 
+
+}active_data;
+
+
 
 /// @brief Print response object
 /// @param response_obj Response object to print
