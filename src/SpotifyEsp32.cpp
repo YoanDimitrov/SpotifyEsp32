@@ -3,7 +3,7 @@
 spotify_log_level_t _spotify_log_level = SPOTIFY_LOG_INFO;
 
 namespace spotify_types {
-  bool SHUFFLE_ON = true;
+  bool SHUFFLE_ON = true; 
   bool SHUFFLE_OFF = false;
   const char* REPEAT_OFF = "off";
   const char* REPEAT_TRACK = "track";
@@ -1476,6 +1476,16 @@ bool Spotify::is_playing(){
 }
 
 ///Jonkata productions
+
+active_data Spotify::current_data(){
+  active_data playback;
+  JsonDocument emptyFilter;
+  emptyFilter[]=false;
+  response data = get_track_info(filter, trackID);
+
+  return playback;
+}
+
 int Spotify::progress_ms(){
   int progress_ms=NULL;
   JsonDocument filter;
@@ -1518,6 +1528,7 @@ int Spotify::duration_ms(){
 
   return duration_ms;
 }
+
 
 
 bool Spotify::volume_modifyable(){
