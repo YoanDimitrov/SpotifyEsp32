@@ -1480,9 +1480,24 @@ bool Spotify::is_playing(){
 active_data Spotify::current_data(){
   active_data playback;
   JsonDocument emptyFilter;
-  emptyFilter[]=false;
-  response data = get_track_info(filter, trackID);
-
+  
+  response data = currently_playing(emptyFilter);
+  
+  if(valid_http_code(data.status_code) && !data.reply.isNull()){
+    playback.progress = data.reply["progress_ms"].as<int>();
+    playback.duration = data.reply["item"]["duration_ms"].as<int>();
+    playback.trackName = data.reply["item"]["name"].as<String>();
+    
+    JsonArray artists = data.reply["item"]["artists"].as<JsonArray>();
+    playback.artistName = "";
+    for(int i = 0; i < artists.size(); i++){
+      playback.artistName += artists[i]["name"].as<String>();
+      if(i < artists.size() - 1){
+        playback.artistName += ", ";
+      }
+    }
+  }
+  
   return playback;
 }
 
