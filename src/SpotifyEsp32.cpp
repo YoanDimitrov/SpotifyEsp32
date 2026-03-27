@@ -1479,14 +1479,22 @@ bool Spotify::is_playing(){
 
 active_data Spotify::current_data(){
   active_data playback;
+  playback.status="Ok";
+  
   JsonDocument emptyFilter;
   
   response data = currently_playing(emptyFilter);
   
-  if(valid_http_code(data.status_code) && !data.reply.isNull()){
+  if(valid_http_code(data.status_code)){
+    if (data.reply["progress_ms"].isNull() || data.reply["item"]["duration_ms"].isNull() || data.reply["item"]["name"].isNull() || data.reply["is_playing"].isNull() || data.reply["item"]["artists"].isNull())
+    {
+      playback.status = "ErrorTypeNull";
+      return playback;
+    }
     playback.progress = data.reply["progress_ms"].as<int>();
     playback.duration = data.reply["item"]["duration_ms"].as<int>();
     playback.trackName = data.reply["item"]["name"].as<String>();
+    playback.isPlaying = data.reply["is_playing"].as<bool>();
     
     JsonArray artists = data.reply["item"]["artists"].as<JsonArray>();
     playback.artistName = "";
@@ -1497,6 +1505,7 @@ active_data Spotify::current_data(){
       }
     }
   }
+  else playback.status = "ErrorTypeInvalidHttpCode";
   
   return playback;
 }
