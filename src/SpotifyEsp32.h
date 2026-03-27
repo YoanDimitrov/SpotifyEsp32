@@ -98,9 +98,10 @@ typedef struct{
 
 /// Jonkata production
 typedef struct {
+  String status;
   int progress, duration;
   String trackName, artistName; 
-
+  bool isPlaying;
 }active_data;
 
 
@@ -664,6 +665,7 @@ class Spotify {
     int progress_ms();
     unsigned long long timestamp();
     int duration_ms();
+    active_data current_data();
 
     /// @brief Get if it is possible to modify volume on current device
     /// @return true if it is possible to modify volume on current device
